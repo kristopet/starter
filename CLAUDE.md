@@ -20,16 +20,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npx drizzle-kit push` - Push schema changes to database
 - `npx drizzle-kit generate` - Generate migration files
 - `npx drizzle-kit migrate` - Run migrations
-- `npx bun db/seed` - Seed database
+- `npx drizzle-kit studio` - Open Drizzle Studio for database management
+- `npx bun db/seed` - Seed database with initial data
 - `npx supabase start` - Start local Supabase instance
+- `npx supabase stop` - Stop local Supabase instance
 
 ### Testing
 - `npm run test` - Run all tests (unit + e2e)
 - `npm run test:unit` - Run Jest unit tests
+- `npm run test:unit -- path/to/test` - Run specific unit test
 - `npm run test:e2e` - Run Playwright e2e tests
+- `npm run test:e2e -- --ui` - Run Playwright tests with UI mode
 
 ### Shadcn UI Components
 - `npx shadcn@latest add [component-name]` - Install new Shadcn UI components
+- `npx shadcn@latest diff [component-name]` - Check for component updates
 
 ## Architecture
 
@@ -56,8 +61,19 @@ This is a Next.js 15 SaaS template using the App Router with clear separation be
 3. Stripe integration for subscription management
 4. Server actions handle all data mutations with proper auth checks
 
+### Tech Stack
+- **Framework**: Next.js 15 with Turbopack
+- **Styling**: Tailwind CSS v4
+- **Database**: PostgreSQL via Supabase
+- **ORM**: Drizzle ORM
+- **Authentication**: Clerk
+- **Payments**: Stripe
+- **UI Components**: Shadcn UI (built on Radix UI)
+- **Testing**: Jest (unit) + Playwright (e2e)
+
 ### Environment Variables Required
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key
 - `CLERK_SECRET_KEY` - Clerk secret key
 - `STRIPE_SECRET_KEY` - Stripe secret key
-- Database connection handled by Supabase CLI
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook endpoint secret
+- Database connection handled by Supabase CLI locally
