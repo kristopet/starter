@@ -3,5 +3,19 @@
     "allow": [],
     "deny": []
   },
-  "model": "opus"
+  "model": "opus",
+  "customInstructions": "This is the main Next.js SaaS boilerplate. Features: Clerk auth, Stripe payments, Supabase database. Use 'npm run feature:new <name>' to create feature branches as worktrees.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ $PWD == */starter-* ]]; then echo \"📝 Modified in $(basename $PWD) feature branch\"; fi"
+          }
+        ]
+      }
+    ]
+  }
 }

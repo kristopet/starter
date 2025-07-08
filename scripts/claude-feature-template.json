@@ -1,0 +1,15 @@
+{
+  "customInstructions": "Feature: {{FEATURE_NAME}}. This is a feature branch. Key tasks: implement feature, test thoroughly, merge when ready via: cd ../starter && git merge feature/{{FEATURE_NAME}}",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '🎯 Working on: {{FEATURE_NAME}} feature' && git status --porcelain | head -5"
+          }
+        ]
+      }
+    ]
+  }
+}
