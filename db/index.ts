@@ -3,7 +3,10 @@ import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import { customers } from "./schema/customers"
 
-config({ path: ".env.local" })
+// Only load .env.local in development
+if (process.env.NODE_ENV !== "production") {
+  config({ path: ".env.local" })
+}
 
 const databaseUrl = process.env.DATABASE_URL
 if (!databaseUrl) {
