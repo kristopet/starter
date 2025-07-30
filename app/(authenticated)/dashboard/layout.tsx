@@ -14,12 +14,23 @@ export default async function DashboardLayout({
     redirect("/login")
   }
 
-  const customer = await getCustomerByUserId(user.id)
+  let customer = await getCustomerByUserId(user.id)
+
+  // If no customer record exists, create one (webhook may not have fired yet)
+  if (!customer) {
+    try {
+      const { createCustomer } = await import("@/actions/customers")
+      const result = await createCustomer(user.id)
+      if (result.isSuccess && result.data) {
+        customer = result.data
+      }
+    } catch (error) {
+      console.error("Failed to create customer on demand:", error)
+    }
+  }
 
   // Gate dashboard access for pro members only
-  // Store a message to show why they were redirected
   if (!customer || customer.membership !== "pro") {
-    // Using searchParams to pass a message that can be read by client components
     redirect("/?redirect=dashboard#pricing")
   }
 
