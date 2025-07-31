@@ -141,5 +141,25 @@ This error typically means incorrect database credentials or connection string f
 3. Each feature gets its own port and git branch
 4. Merge when ready: `git merge feature/ai-chat`
 
+#### Worktree Best Practices
+- Worktrees are created as siblings (../starter-feature-name), not subfolders
+- Only `.env.local` is symlinked - maintains proper isolation
+- Each worktree gets its own `.claude/settings.json` with feature context
+- Don't over-link configs - copy and adjust paths when needed
+- MCP configs (.mcp.json) should be copied, not linked (due to absolute paths)
+
+### Database Timing Issues
+- Dashboard layout creates customer record on-demand if webhook hasn't fired yet
+- This prevents "Tenant or user not found" errors during signup flow
+- Common with async webhooks - the app now handles this gracefully
+
+### AI Integration Strategy
+- Build from scratch with AI SDK v5 rather than migrating existing solutions
+- AI SDK is simple enough that complex migrations aren't justified
+- Start minimal: basic chat → persistence → UI polish → billing integration
+- Reference (don't copy) Vercel AI chatbot for UI patterns only
+
 ## Testing Memories
 - When testing production env always remember to ask from user if the Clerk webhook has been set for production site
+- Supabase free tier pauses databases after inactivity - check dashboard if "Tenant or user not found" errors occur
+- Production webhooks need different signing secrets than local development
