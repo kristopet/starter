@@ -1,0 +1,52 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Show Help",
+      "type": "shell",
+      "command": "pnpm run help",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Create Feature",
+      "type": "shell",
+      "command": "pnpm run feature:new ${input:featureName}",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Sync Pull",
+      "type": "shell",
+      "command": "pnpm run sync:pull",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Sync Push",
+      "type": "shell",
+      "command": "pnpm run sync:push",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "featureName",
+      "type": "promptString",
+      "description": "Feature name (e.g., ai-chat)"
+    }
+  ]
+}

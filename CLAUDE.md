@@ -153,13 +153,61 @@ This error typically means incorrect database credentials or connection string f
 - This prevents "Tenant or user not found" errors during signup flow
 - Common with async webhooks - the app now handles this gracefully
 
-### AI Integration Strategy
-- Build from scratch with AI SDK v5 rather than migrating existing solutions
-- AI SDK is simple enough that complex migrations aren't justified
-- Start minimal: basic chat → persistence → UI polish → billing integration
-- Reference (don't copy) Vercel AI chatbot for UI patterns only
-
 ## Testing Memories
 - When testing production env always remember to ask from user if the Clerk webhook has been set for production site
 - Supabase free tier pauses databases after inactivity - check dashboard if "Tenant or user not found" errors occur
 - Production webhooks need different signing secrets than local development
+
+## Worktree Sync Workflow
+
+### When to Sync
+
+**Pull from Main** (`pnpm run sync:pull`)
+- Starting work for the day
+- When you need latest shared docs
+- If main has important updates
+
+**Push to Main** (`pnpm run sync:push`)
+- Found something important
+- End of work session
+- Before merging feature
+- Documented key decisions
+
+### Example Daily Workflow
+```bash
+# Morning
+cd ../starter-ai-chat
+pnpm run sync:pull     # Get overnight updates
+
+# During work
+echo "- GPT-4 needs 8k context" >> .claude/memory/insights-ai-chat.md
+echo "## Streaming Setup" >> docs/ai-chat/streaming.md
+
+# Before lunch/end of day
+pnpm run sync:push     # Share discoveries
+
+# Before merge
+pnpm run sync:push     # Final sync
+cd ../starter
+pnpm run feature:premerge feature/ai-chat
+```
+
+## Feature Development
+- Use pnpm run feature:new <name> to create isolated feature worktrees
+- Worktrees go in sibling directories (../starter-feature-name)
+- Each worktree runs on its own port (main: 3000, features: 3001+)
+
+## Database Issues
+- "Tenant or user not found" often means Supabase is paused (free tier)
+- Dashboard layout now creates customer records if webhook hasn't fired yet
+- Always use pooler connection (port 6543) for Vercel deployments
+
+## Webhook Setup
+- Production webhooks need separate configuration from local
+- Each environment needs its own webhook signing secret
+- Check Clerk webhook logs if customer records aren't created
+
+## Best Practices
+- Only link .env.local to worktrees, copy other configs as needed
+- Don't link .mcp.json (has absolute paths)
+- Keep .claude folders separate for each worktree

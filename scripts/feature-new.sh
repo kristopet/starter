@@ -29,6 +29,24 @@ echo "PORT=$PORT" > .env.development.local
 mkdir -p .claude
 sed "s/{{FEATURE_NAME}}/$FEATURE_NAME/g" ../starter/scripts/claude-feature-template.json > .claude/settings.json
 
+# Create local memory structure (not linked)
+mkdir -p .claude/memory
+echo "# $FEATURE_NAME Insights" > ".claude/memory/insights-$FEATURE_NAME.md"
+echo "" >> ".claude/memory/insights-$FEATURE_NAME.md"
+echo "## $(date '+%Y-%m-%d')" >> ".claude/memory/insights-$FEATURE_NAME.md"
+echo "- Feature started" >> ".claude/memory/insights-$FEATURE_NAME.md"
+echo "🧠 Created feature-specific memory file"
+
+# Create local docs structure (not linked)
+mkdir -p docs/$FEATURE_NAME
+echo "# $FEATURE_NAME Documentation" > "docs/$FEATURE_NAME/README.md"
+echo "📚 Created feature-specific docs folder"
+
+# Initial sync from main
+echo ""
+echo "🔄 Syncing from main project..."
+bash ../starter/scripts/feature-sync.sh pull
+
 # Install dependencies
 echo "📦 Installing dependencies..."
 pnpm install

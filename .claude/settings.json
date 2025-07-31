@@ -1,10 +1,21 @@
 {
+  "customInstructions": "Start with: pnpm run help. Key commands: feature:new, sync:pull/push, feature:premerge. Check docs/WORKTREE_WORKFLOW.md for details.",
   "permissions": {
     "allow": [],
     "deny": []
   },
   "model": "opus",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/claude-welcome.sh || (echo '💡 Run: pnpm run help' && git branch --show-current)"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit|MultiEdit",
