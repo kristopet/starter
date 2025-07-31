@@ -117,6 +117,24 @@ This is a Next.js 15 SaaS template using the App Router with clear separation be
 
 💡 **Common Issue**: If users can sign up but customer records aren't created, the Clerk webhook isn't reaching your production app. Check webhook endpoint URL and signing secret.
 
+### Database Connection Troubleshooting
+
+**"Tenant or user not found" Error:**
+This error typically means incorrect database credentials or connection string format.
+
+**For Supabase Transaction Pooler:**
+1. Go to Supabase Dashboard → Click "Connect"
+2. Select "Connection pooling" → "Transaction" tab
+3. Copy the exact connection string (port 6543)
+4. Ensure it includes your actual password (not `[YOUR-PASSWORD]`)
+5. Check that the region matches your project (e.g., `eu-north-1`)
+
+**Common issues:**
+- ❌ Wrong region in connection string (project may have moved)
+- ❌ Missing or incorrect password
+- ❌ Using direct connection instead of pooler connection
+- ❌ SSL configuration conflicts (keep `prepare: false` only)
+
 ### Feature Development Workflow
 1. Create feature: `pnpm run feature:new ai-chat`
 2. Work in isolated worktree: `cd ../starter-ai-chat`
