@@ -5,15 +5,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 💡 **Tip**: Use `#` to quickly add important discoveries to this file during development.
 
 ## Quick Start
-- **Test webhooks**: `pnpm run dev:webhook`
-- **New feature**: `pnpm run feature:new <name>`
+- **Local development**: Terminal 1: `pnpm run dev` | Terminal 2: `pnpm run webhook`
+- **New feature**: `pnpm run feature:new <name>`  
 - **Deploy**: Push to GitHub → Vercel auto-deploys
 
 ## Commands
 
 ### Development
 - `pnpm run dev` - Start development server with Turbopack
-- `pnpm run dev:webhook` - Start dev server + ngrok for webhook testing
+- `pnpm run webhook` - Start ngrok tunnel for webhook testing
+- `pnpm run dev:webhook` - Start dev server + ngrok in single terminal (alternative)
 - `pnpm run build` - Build for production
 - `pnpm run start` - Start production server
 - `pnpm run feature:new <name>` - Create new feature worktree
@@ -94,10 +95,33 @@ This is a Next.js 15 SaaS template using the App Router with clear separation be
 ### Webhook Setup
 1. **Clerk**: Automatically creates customer records on user signup via `/api/clerk/webhooks`
 2. **Stripe**: Handles subscription lifecycle via `/api/stripe/webhooks`
-3. **Local Testing**: Use `pnpm run dev:webhook` with your ngrok domain
+3. **Local Testing**: Terminal 1: `pnpm run dev` | Terminal 2: `pnpm run webhook`
+
+#### Production Deployment Checklist
+⚠️ **IMPORTANT**: When deploying to production, webhooks must be reconfigured:
+
+**Clerk Production Webhook:**
+1. Go to [Clerk Dashboard](https://dashboard.clerk.com) → Webhooks → Add Endpoint
+2. Set endpoint URL: `https://your-vercel-url.vercel.app/api/clerk/webhooks`
+3. Select events: `user.created`
+4. Copy the new signing secret (different from local!)
+5. Update Vercel env var: `CLERK_WEBHOOK_SECRET=whsec_...` (production secret)
+6. Redeploy to apply changes
+
+**Stripe Production Webhook:**
+1. Go to [Stripe Dashboard](https://dashboard.stripe.com) → Webhooks → Add endpoint
+2. Set endpoint URL: `https://your-vercel-url.vercel.app/api/stripe/webhooks`
+3. Select relevant events for subscription lifecycle
+4. Copy signing secret and update `STRIPE_WEBHOOK_SECRET` in Vercel
+5. Redeploy to apply changes
+
+💡 **Common Issue**: If users can sign up but customer records aren't created, the Clerk webhook isn't reaching your production app. Check webhook endpoint URL and signing secret.
 
 ### Feature Development Workflow
 1. Create feature: `pnpm run feature:new ai-chat`
 2. Work in isolated worktree: `cd ../starter-ai-chat`
 3. Each feature gets its own port and git branch
 4. Merge when ready: `git merge feature/ai-chat`
+
+## Testing Memories
+- When testing production env always remember to ask from user if the Clerk webhook has been set for production site

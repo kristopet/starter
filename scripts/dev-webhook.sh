@@ -5,7 +5,7 @@ echo "🚀 Starting Next.js + ngrok for webhook development..."
 
 # Load NGROK_DOMAIN from .env.local
 if [ -f .env.local ]; then
-    source <(grep NGROK_DOMAIN .env.local)
+    export $(grep NGROK_DOMAIN .env.local | xargs)
 fi
 
 if [ -z "$NGROK_DOMAIN" ]; then
@@ -13,18 +13,33 @@ if [ -z "$NGROK_DOMAIN" ]; then
     exit 1
 fi
 
-# Use GNU parallel or background processes
-if command -v parallel &> /dev/null; then
-    parallel --line-buffer ::: \
-        "pnpm run dev" \
-        "sleep 3 && ngrok http 3000 --domain=$NGROK_DOMAIN"
-else
-    # Fallback: simple background process
-    pnpm run dev &
-    sleep 3
+# Start Next.js in background
+echo "🚀 Starting Next.js dev server..."
+pnpm run dev &
+NEXTJS_PID=$!
+
+# Wait for Next.js to start
+sleep 5
+
+echo ""
+echo "📡 Starting ngrok tunnel..."
+echo "🔗 Webhook URL: https://$NGROK_DOMAIN/api/clerk/webhooks"
+echo "🔗 Local dev: http://localhost:3000"
+echo ""
+echo "Press Ctrl+C to stop both services"
+echo ""
+
+# Function to cleanup on exit
+cleanup() {
     echo ""
-    echo "📡 Starting ngrok on $NGROK_DOMAIN..."
-    echo "🔗 Webhook URL: https://$NGROK_DOMAIN/api/clerk/webhooks"
-    echo ""
-    ngrok http 3000 --domain=$NGROK_DOMAIN
-fi
+    echo "🛑 Stopping services..."
+    kill $NEXTJS_PID 2>/dev/null
+    pkill -f "ngrok.*3000" 2>/dev/null
+    exit 0
+}
+
+# Set trap for cleanup
+trap cleanup INT TERM
+
+# Start ngrok (this will keep the terminal open)
+ngrok http 3000 --domain=$NGROK_DOMAIN
