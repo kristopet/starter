@@ -42,7 +42,7 @@ export function CTASection() {
             asChild
           >
             <Link
-              href="https://github.com/mckaywrigley/mckays-app-template"
+              href="https://kasulik.ai"
               target="_blank"
             >
               <Github className="mr-2 h-4 w-4" />

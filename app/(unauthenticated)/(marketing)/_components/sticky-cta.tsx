@@ -31,7 +31,7 @@ export function StickyCTA() {
               </div>
               <Button size="sm" asChild className="group">
                 <Link
-                  href="https://github.com/mckaywrigley/mckays-app-template"
+                  href="https://kasulik.ai"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -92,7 +92,7 @@ export function StickyCTA() {
               </div>
               <Button asChild className="group w-full">
                 <Link
-                  href="https://github.com/mckaywrigley/mckays-app-template"
+                  href="https://kasulik.ai"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

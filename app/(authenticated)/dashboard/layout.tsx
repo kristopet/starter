@@ -14,25 +14,33 @@ export default async function DashboardLayout({
     redirect("/login")
   }
 
+  console.log(`[Dashboard Layout] Checking customer for user ${user.id}`)
   let customer = await getCustomerByUserId(user.id)
 
   // If no customer record exists, create one (webhook may not have fired yet)
   if (!customer) {
+    console.log(`[Dashboard Layout] No customer found for user ${user.id}, creating one...`)
     try {
       const { createCustomer } = await import("@/actions/customers")
       const result = await createCustomer(user.id)
       if (result.isSuccess && result.data) {
         customer = result.data
+        console.log(`[Dashboard Layout] Customer created successfully for user ${user.id}`)
+      } else {
+        console.error(`[Dashboard Layout] Failed to create customer for user ${user.id}`)
       }
     } catch (error) {
-      console.error("Failed to create customer on demand:", error)
+      console.error(`[Dashboard Layout] Error creating customer for user ${user.id}:`, error)
     }
+  } else {
+    console.log(`[Dashboard Layout] Customer found for user ${user.id}, membership: ${customer.membership}`)
   }
 
-  // Gate dashboard access for pro members only
-  if (!customer || customer.membership !== "pro") {
-    redirect("/?redirect=dashboard#pricing")
-  }
+  // Temporarily allow all authenticated users to access dashboard
+  // TODO: Re-enable this check once payment flow is implemented
+  // if (!customer || customer.membership !== "pro") {
+  //   redirect("/?redirect=dashboard#pricing")
+  // }
 
   const userData = {
     name:
@@ -41,7 +49,7 @@ export default async function DashboardLayout({
         : user.firstName || user.username || "User",
     email: user.emailAddresses[0]?.emailAddress || "",
     avatar: user.imageUrl,
-    membership: customer.membership
+    membership: customer?.membership || "free"
   }
 
   return (

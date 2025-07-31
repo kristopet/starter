@@ -31,7 +31,7 @@ sed "s/{{FEATURE_NAME}}/$FEATURE_NAME/g" ../starter/scripts/claude-feature-templ
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 echo "
 ✅ Feature worktree created successfully!

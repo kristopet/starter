@@ -38,21 +38,36 @@ export async function POST(req: Request) {
 
   // Handle user.created event
   if (evt.type === "user.created") {
+    console.log(`[Clerk Webhook] Processing user.created for ${evt.data.id}`)
+    
     try {
+      // Check if customer already exists (in case of duplicate webhook)
+      const { getCustomerByUserId } = await import("@/actions/customers")
+      const existingCustomer = await getCustomerByUserId(evt.data.id)
+      
+      if (existingCustomer) {
+        console.log(`[Clerk Webhook] Customer already exists for ${evt.data.id}`)
+        return new Response(JSON.stringify({ received: true }), { status: 200 })
+      }
+      
       const result = await createCustomer(evt.data.id)
       if (!result.isSuccess) {
-        console.error("Failed to create customer:", evt.data.id)
+        console.error(`[Clerk Webhook] Failed to create customer for ${evt.data.id}`)
+        // Return 200 to prevent Clerk from retrying immediately
+        // The dashboard layout will create the customer on demand
         return new Response(
-          JSON.stringify({ error: "Failed to create customer" }), 
-          { status: 500 }
+          JSON.stringify({ received: true, warning: "Customer creation deferred" }), 
+          { status: 200 }
         )
       }
-      console.log("Customer created successfully:", evt.data.id)
+      console.log(`[Clerk Webhook] Customer created successfully for ${evt.data.id}`)
     } catch (error) {
-      console.error("Error creating customer:", error)
+      console.error(`[Clerk Webhook] Error creating customer for ${evt.data.id}:`, error)
+      // Return 200 to prevent Clerk from retrying immediately
+      // The dashboard layout will create the customer on demand
       return new Response(
-        JSON.stringify({ error: "Error creating customer" }), 
-        { status: 500 }
+        JSON.stringify({ received: true, warning: "Customer creation deferred", error: String(error) }), 
+        { status: 200 }
       )
     }
   }

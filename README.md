@@ -1,4 +1,4 @@
-# Mckay's App Template
+# Kristo's Starter
 
 This is a full-stack app template that I use to build my own apps.
 

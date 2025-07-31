@@ -37,7 +37,7 @@ export function Header({ userMembership }: HeaderProps) {
         >
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
-              <span className="text-xl font-bold">Mckay's App Template</span>
+              <span className="text-xl font-bold">Kristo's Starter</span>
             </Link>
           </div>
           <div className="flex lg:hidden">

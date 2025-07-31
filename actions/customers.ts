@@ -44,21 +44,54 @@ export async function createCustomer(
   userId: string
 ): Promise<{ isSuccess: boolean; data?: SelectCustomer }> {
   try {
+    // Check if customer already exists to prevent duplicates
+    const existingCustomer = await db.query.customers.findFirst({
+      where: eq(customers.userId, userId)
+    })
+    
+    if (existingCustomer) {
+      console.log(`[createCustomer] Customer already exists for user ${userId}`)
+      return { isSuccess: true, data: existingCustomer }
+    }
+    
     const [newCustomer] = await db
       .insert(customers)
       .values({
         userId,
         membership: "free"
       })
+      .onConflictDoNothing() // Prevent duplicate key errors
       .returning()
 
     if (!newCustomer) {
+      // Customer might have been created by another process
+      const customer = await db.query.customers.findFirst({
+        where: eq(customers.userId, userId)
+      })
+      
+      if (customer) {
+        return { isSuccess: true, data: customer }
+      }
+      
       return { isSuccess: false }
     }
 
+    console.log(`[createCustomer] Successfully created customer for user ${userId}`)
     return { isSuccess: true, data: newCustomer }
   } catch (error) {
-    console.error("Error creating customer:", error)
+    console.error(`[createCustomer] Error creating customer for user ${userId}:`, error)
+    
+    // If it's a unique constraint violation, try to fetch the existing customer
+    if (error instanceof Error && error.message.includes("unique")) {
+      const customer = await db.query.customers.findFirst({
+        where: eq(customers.userId, userId)
+      })
+      
+      if (customer) {
+        return { isSuccess: true, data: customer }
+      }
+    }
+    
     return { isSuccess: false }
   }
 }

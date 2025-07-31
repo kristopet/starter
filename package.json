@@ -1,5 +1,5 @@
 {
-  "name": "mckays-app-template",
+  "name": "kristo-starter",
   "version": "2.0.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "playwright test",
-    "dev:tunnel": "bash scripts/dev-with-ngrok.sh",
+    "dev:webhook": "bash scripts/dev-webhook.sh",
     "feature:new": "bash scripts/feature-new.sh",
     "feature:list": "git worktree list",
     "feature:clean": "git worktree prune"

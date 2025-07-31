@@ -8,7 +8,21 @@ export async function HeaderWrapper() {
   let membership: SelectCustomer["membership"] | null = null
 
   if (user) {
-    const customer = await getCustomerByUserId(user.id)
+    let customer = await getCustomerByUserId(user.id)
+    
+    // If no customer record exists, create one (webhook may not have fired yet)
+    if (!customer) {
+      try {
+        const { createCustomer } = await import("@/actions/customers")
+        const result = await createCustomer(user.id)
+        if (result.isSuccess && result.data) {
+          customer = result.data
+        }
+      } catch (error) {
+        console.error("[HeaderWrapper] Failed to create customer on demand:", error)
+      }
+    }
+    
     membership = customer?.membership ?? "free"
   }
 

@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Mckay's App Template",
+  title: "Kristo's Starter",
   description: "The easiest way to start your next project."
 }
 
